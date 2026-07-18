@@ -470,6 +470,23 @@ class RRuleTest(unittest.TestCase):
                           datetime(1997, 9, 16, 9, 0),
                           datetime(1997, 10, 16, 9, 0)])
 
+    def testMonthlyByNWeekDayOutOfRange(self):
+        # Impossible nth weekday must yield no occurrences, not IndexError
+        self.assertEqual(list(rrule(MONTHLY,
+                              count=3,
+                              byweekday=MO(10),
+                              dtstart=datetime(1997, 9, 2, 9, 0))),
+                         [])
+        self.assertEqual(list(rrulestr(
+            'FREQ=MONTHLY;BYDAY=+10MO;COUNT=3',
+            dtstart=datetime(1997, 9, 2, 9, 0))),
+                         [])
+        self.assertEqual(list(rrule(MONTHLY,
+                              count=3,
+                              byweekday=MO(-50),
+                              dtstart=datetime(1997, 9, 2, 9, 0))),
+                         [])
+
     def testMonthlyByMonthAndWeekDay(self):
         self.assertEqual(list(rrule(MONTHLY,
                               count=3,
