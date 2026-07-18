@@ -115,6 +115,15 @@ class RelativeDeltaTest(unittest.TestCase):
         self.assertEqual(self.today+relativedelta(weekday=calendar.FRIDAY),
                          date(2003, 9, 19))
 
+    def testInvalidWeekdayIntRaisesValueError(self):
+        # Integer weekday must be 0..6 (0=MO); out-of-range used to IndexError.
+        for bad in (7, 8, -1, -8):
+            with self.assertRaises(ValueError) as cm:
+                relativedelta(weekday=bad)
+            self.assertIn("invalid weekday", str(cm.exception))
+        self.assertEqual(relativedelta(weekday=0).weekday, MO)
+        self.assertEqual(relativedelta(weekday=6).weekday, SU)
+
     def testLastFridayInThisMonth(self):
         self.assertEqual(self.today+relativedelta(day=31, weekday=FR(-1)),
                          date(2003, 9, 26))
